@@ -10,15 +10,17 @@ import java.util.Random;
 public class QuoteGenerator {
 
     private final Random random;
-    private final List<String> quotesList;
+    private final List<String> quotes;
 
 
-    public QuoteGenerator() {
-        this.random = new Random();
-        quotesList = createListOfQuotes();
+    public QuoteGenerator(List<String> quotes, Random random) {
+        this.random = random;
+        this.quotes = quotes;
     }
 
-    private List<String> createListOfQuotes() {
-        return Arrays.asList("");
+    public String getRandomQuote() {
+        int quotesSize = quotes.size();
+        int selectedQuote = random.nextInt(quotesSize - 1);
+        return quotes.get(selectedQuote);
     }
 }
