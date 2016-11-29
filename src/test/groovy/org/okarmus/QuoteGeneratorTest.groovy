@@ -10,14 +10,13 @@ class QuoteGeneratorTest extends Specification {
     QuoteGenerator underTest
 
 
-    def "should return mock method" () {
+    def "should test using mock method" () {
         given:
             List<String> quotes = createListOfQuotes()
 
             Random random = Mock()                      //mock creation
             random.nextInt(quotes.size()-1) >> drawn    //specifying behaviour of mock method
-
-        underTest = new QuoteGenerator(quotes, random)
+            underTest = new QuoteGenerator(quotes, random)
         expect:
             underTest.getRandomQuote() == quotes.get(drawn)
         where:
@@ -25,8 +24,49 @@ class QuoteGeneratorTest extends Specification {
     }
 
 
+    def "should test using stub method" () {
+        given:
+            List<String> quotes = createListOfQuotes()
 
+            Random random = Stub()                       //stub creation
+            random.nextInt(quotes.size()-1) >> drawn    //specifying behaviour of mock method
+            underTest = new QuoteGenerator(quotes, random)
+        expect:
+            underTest.getRandomQuote() == quotes.get(drawn)
+        where:
+            drawn << [1,2,3,0]
+    }
 
+    def "should test using spy method" () {
+        given:
+        List<String> quotes = createListOfQuotes()
+
+        Random random = Spy()                       //spu creation
+        random.nextInt(quotes.size()-1) >> drawn    //specifying behaviour of mock method
+        underTest = new QuoteGenerator(quotes, random)
+        expect:
+        underTest.getRandomQuote() == quotes.get(drawn)
+
+        System.out.println(random.nextInt())
+        System.out.println(random.nextInt(12))
+
+        where:
+            drawn << [1,2,3,0]
+    }
+
+    def "should test using multiple invocation method" () {
+        given:
+            Random random = Mock()
+            random.nextInt(12) >>> [1,2,3,0]
+        when:
+            random.nextInt(12) == 1
+            random.nextInt(12) == 2
+            random.nextInt(12) == 3
+            random.nextInt(12) == 0
+        then:
+            4 * random.nextInt(12)
+            !random.nextInt(10)
+    }
 
     List<String> createListOfQuotes() {
         return ["You can do anything, but not everything.",
